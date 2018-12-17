@@ -30,5 +30,10 @@ ggplot(data=infra_per_department, aes(x=DepCode, y=Somme)) + geom_col(position='
 ggplot(data=Population_per_department_2015, aes(x=DepCode, y=Population)) + geom_col(position='dodge')
 
 # The average number of equipments per inhabitants for each department
-merged_data_frames <- merge(infra_per_department, Population_per_department_2015, by = "DepCode")
-average_equipment_population <- data.frame(DepCode = infra_per_department$DepCode, Nb_infra = infra_per_department$Somme, Nb_inhabitants = Population_per_department_2015$Population)
+average_equipment_population <- merge(infra_per_department, Population_per_department_2015, by = "DepCode")
+average_equipment_population$Average = average_equipment_population$Population/average_equipment_population$Somme
+ggplot(data=average_equipment_population, aes(x=DepCode, y=Average, color=DepCode)) + geom_col(position='dodge')
+
+# Get the 10 best and the 10 worst departments
+head(average_equipment_population[order(average_equipment_population$Average, decreasing=TRUE), ], 10)
+tail(average_equipment_population[order(average_equipment_population$Average, decreasing=TRUE), ], 10)
