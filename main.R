@@ -5,9 +5,14 @@
 
 # OpenData_15Avril2012 <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/RES_T2_20122016/RES20122016/Export_OpenData_Avril2012/OpenData_15Avril2012.txt", 
 #                                    +     ";", escape_double = FALSE, trim_ws = TRUE)
-X20160713_RES_FichesInstallations <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/RES_T2_20122016/RES20122016/Fichiers_T22016/20160713_RES_FichesInstallations/20160713_RES_FichesInstallations.csv", 
+X20150801_RES_FichesInstallations <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/RES_T2_20122016/RES20122016/Fichiers_T22015/20150801_RES_FichesInstallations/20150801_RES_FichesInstallations.csv", 
                                                 +     ";", escape_double = FALSE, trim_ws = TRUE)
+Population_per_department_2015 <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/ThePlaceOfSportsInTheSociety/Population_per_department_2015.csv", 
+                                             +     ";", escape_double = FALSE, trim_ws = TRUE)
 
+# We choose to work with the metropolitan France
+Sportive_equipments_2015 <- X20150801_RES_FichesInstallations[which(X20150801_RES_FichesInstallations$DepCode < 96), ]
+Population_per_department_2015 <- Population_per_department_2015[which(Population_per_department_2015$DepCode < 96), ]
 
 # Make the data set cleaner by deleting the wrong data
 # Cleaned_dataset <- OpenData_15Avril2012[!is.na(as.numeric(as.character(OpenData_15Avril2012$DepCode))),]
@@ -18,5 +23,12 @@ X20160713_RES_FichesInstallations <- read_delim("INSA/5ème année/Traitement et A
 # ggplot(data=infra_per_department, aes(x=DepCode, y=Somme)) + geom_col(position='dodge')
 
 # The number of sportive infrastructures per department
-infra_per_department <- ddply(X20160713_RES_FichesInstallations, "DepCode", summarize, Somme=sum(Nb_Equipements))
+infra_per_department <- ddply(Sportive_equipments_2015, "DepCode", summarize, Somme=sum(Nb_Equipements))
 ggplot(data=infra_per_department, aes(x=DepCode, y=Somme)) + geom_col(position='dodge')
+
+# The population per department
+ggplot(data=Population_per_department_2015, aes(x=DepCode, y=Population)) + geom_col(position='dodge')
+
+# The average number of equipments per inhabitants for each department
+merged_data_frames <- merge(infra_per_department, Population_per_department_2015, by = "DepCode")
+average_equipment_population <- data.frame(DepCode = infra_per_department$DepCode, Nb_infra = infra_per_department$Somme, Nb_inhabitants = Population_per_department_2015$Population)
