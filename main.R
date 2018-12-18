@@ -5,14 +5,18 @@
 
 # OpenData_15Avril2012 <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/RES_T2_20122016/RES20122016/Export_OpenData_Avril2012/OpenData_15Avril2012.txt", 
 #                                    +     ";", escape_double = FALSE, trim_ws = TRUE)
-X20150801_RES_FichesInstallations <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/RES_T2_20122016/RES20122016/Fichiers_T22015/20150801_RES_FichesInstallations/20150801_RES_FichesInstallations.csv", 
-                                                +     ";", escape_double = FALSE, trim_ws = TRUE)
-Population_per_department_2015 <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/ThePlaceOfSportsInTheSociety/Population_per_department_2015.csv", 
-                                             +     ";", escape_double = FALSE, trim_ws = TRUE)
+#Sportive_equipments_2015 <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/RES_T2_20122016/RES20122016/Fichiers_T22015/20150801_RES_FichesInstallations/20150801_RES_FichesInstallations.csv", 
+#                                                +     ";", escape_double = FALSE, trim_ws = TRUE)
+#Population_per_department_2015 <- read_delim("INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/ThePlaceOfSportsInTheSociety/Population_per_department_2015.csv", 
+#                                             +     ";", escape_double = FALSE, trim_ws = TRUE)
+#Import files
+Sportive_equipments_2015 = read.csv("/Users/Mathieu/Documents/INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/ThePlaceOfSportsInTheSociety/20150801_RES_FichesInstallations.csv", sep=";")
+Population_per_department_2015 = read.csv("/Users/Mathieu/Documents/INSA/5ème année/Traitement et Analyse des Données pour le Big Data/Projet/ThePlaceOfSportsInTheSociety/Population_per_department_2015.csv", sep = ";")
 
 # We choose to work with the metropolitan France
-Sportive_equipments_2015 <- X20150801_RES_FichesInstallations[which(X20150801_RES_FichesInstallations$DepCode < 96), ]
-Population_per_department_2015 <- Population_per_department_2015[which(Population_per_department_2015$DepCode < 96), ]
+france_metrop <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", (10:95), "2A", "2B")
+Sportive_equipments_2015 <- Sportive_equipments_2015[which(Sportive_equipments_2015$DepCode%in%france_metrop), ]
+Population_per_department_2015 <- Population_per_department_2015[which(Population_per_department_2015$DepCode%in%france_metrop), ]
 
 # Make the data set cleaner by deleting the wrong data
 # Cleaned_dataset <- OpenData_15Avril2012[!is.na(as.numeric(as.character(OpenData_15Avril2012$DepCode))),]
@@ -32,8 +36,12 @@ ggplot(data=Population_per_department_2015, aes(x=DepCode, y=Population)) + geom
 # The average number of equipments per inhabitants for each department
 average_equipment_population <- merge(infra_per_department, Population_per_department_2015, by = "DepCode")
 average_equipment_population$Average = average_equipment_population$Population/average_equipment_population$Somme
-ggplot(data=average_equipment_population, aes(x=DepCode, y=Average, color=DepCode)) + geom_col(position='dodge')
+ggplot(data=average_equipment_population, aes(x=DepCode, y=Average, color=DepCode)) + geom_col(position='dodge', show.legend = FALSE)
 
 # Get the 10 best and the 10 worst departments
-head(average_equipment_population[order(average_equipment_population$Average, decreasing=TRUE), ], 10)
-tail(average_equipment_population[order(average_equipment_population$Average, decreasing=TRUE), ], 10)
+Worsts <- head(average_equipment_population[order(average_equipment_population$Average, decreasing=TRUE), ], 10)
+Bests <- tail(average_equipment_population[order(average_equipment_population$Average, decreasing=TRUE), ], 10)
+
+# Plot them
+ggplot(data=Worsts, aes(x=reorder(DepCode, -Average), y=Average, fill=DepName)) + geom_col(position = 'dodge')
+ggplot(data=Bests, aes(x=reorder(DepCode, Average), y=Average, fill=DepName)) + geom_col(position = 'dodge')
