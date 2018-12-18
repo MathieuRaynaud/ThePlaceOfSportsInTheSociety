@@ -27,7 +27,18 @@ average_equipment_population <- merge(infra_per_department, Population_per_depar
 average_equipment_population$NbHabPerEquip = average_equipment_population$Population/average_equipment_population$NbEquip
 
 # The life expectancy per departement 
-Life_expectancy_department_2016$Avg_Exp = (Life_expectancy_department_2016$Exp_Men + Life_expectancy_department_2016$Exp_Women)/2
+Life_expectancy_department_2016$Avg_Exp = ((Life_expectancy_department_2016$Exp_Men + Life_expectancy_department_2016$Exp_Women)/2 - 82.3)/82.3
 
 # Merged dataframe
 merged_df = merge(average_equipment_population, Life_expectancy_department_2016, by = c("DepCode","DepName"))
+ggplot(data=merged_df[1:20,], aes(x=DepCode, y=Avg_Exp , y1=NbHabPerEquip, color=DepCode)) + geom_col(position='dodge',show.legend = FALSE)
+
+#select(merged_df,DepCode,NbHabPerEquip,Avg_Exp)
+df_2_plot=data.frame(NbHabPerEquip=merged_df$NbHabPerEquip/10000,Avg_Exp=merged_df$Avg_Exp,DepCode=merged_df$DepCode)
+
+df_2_plot = melt(df_2_plot,id.vars='DepCode')
+
+
+ggplot(df_2_plot, aes(x=DepCode, y=value, fill=variable)) + geom_bar(stat='identity')
+ggplot(df_2_plot, aes(x=DepCode, y=value, fill=variable)) + 
+  geom_bar(stat='identity', position='dodge',show.legend = FALSE)
