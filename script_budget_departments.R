@@ -9,13 +9,15 @@ Budget_per_department_2014 = read.csv("/Users/Mathieu/Documents/INSA/5ème année/
 #Replace N.A values by 0
 Budget_per_department_2014[is.na(Budget_per_department_2014)] <- 0
 
-#Plot relevant data (only investment buddget)
+#Compute total investment budget
 Budget_per_department_2014$Investment_budget <- Budget_per_department_2014$Service_investment + Budget_per_department_2014$Collectivity_investment
-ggplot(data=Budget_per_department_2014, aes(x = DepCode, y = Investment_budget, fill=DepCode)) + geom_bar(stat='identity', position='identity', show.legend=FALSE)
 
 #Remove rows for which data is missing (investment = 0)
 Unknown_departments <- Budget_per_department_2014[c(which(Budget_per_department_2014$Investment_budget == 0)), ]
 Budget_per_department_2014 <- Budget_per_department_2014[-c(which(Budget_per_department_2014$Investment_budget == 0)), ]
+
+#Plot investment per department
+ggplot(data=Budget_per_department_2014, aes(x = DepCode, y = Investment_budget, fill=DepCode)) + geom_bar(stat='identity', position='identity', show.legend=FALSE)
 
 #10 highest investements
 highest_investments <- head(Budget_per_department_2014[order(Budget_per_department_2014$Investment_budget, decreasing=TRUE), ], 10)
@@ -27,3 +29,7 @@ ggplot(data=lower_investments, aes(x=reorder(DepCode, Investment_budget), y=Inve
 
 ## BE CAREFUL !!! WE DO NOT HAVE DATA FOR THESE DEPARTMENTS
 View(Unknown_departments)
+
+#Remove department 54 which have a huge difference with the others
+Budget_per_department_2014 <- Budget_per_department_2014[-c(which(Budget_per_department_2014$DepCode == 54)), ]
+ggplot(data=Budget_per_department_2014, aes(x = DepCode, y = Investment_budget, fill=DepCode)) + geom_bar(stat='identity', position='identity', show.legend=FALSE)
