@@ -31,12 +31,12 @@ ggplot(data=Population_per_department_2015, aes(x=DepCode, y=Population)) + geom
 # The average number of equipments per inhabitants for each department
 average_equipment_population <- merge(infra_per_department, Population_per_department_2015, by = "DepCode")
 average_equipment_population$Average = average_equipment_population$Population/average_equipment_population$Somme
-ggplot(data=average_equipment_population, aes(x=DepCode, y=Average, color=DepCode)) + geom_col(position='dodge', show.legend = FALSE)
+ggplot(data=average_equipment_population, aes(x=DepCode, y=Average, color=DepCode)) + ylab("Number of equipements per inhabitants") + xlab("Departement") + labs(fill = "Departements")+ geom_col(position='dodge', show.legend = FALSE)
 
 # Get the 10 best and the 10 worst departments
 Worsts <- head(average_equipment_population[order(average_equipment_population$Average, decreasing=TRUE), ], 10)
 Bests <- tail(average_equipment_population[order(average_equipment_population$Average, decreasing=TRUE), ], 10)
 
 # Plot them
-ggplot(data=Worsts, aes(x=reorder(DepCode, -Average), y=Average, fill=DepName)) + geom_col(position = 'dodge')
-ggplot(data=Bests, aes(x=reorder(DepCode, Average), y=Average, fill=DepName)) + geom_col(position = 'dodge')
+ggplot(data=Worsts, aes(x=reorder(DepCode, -Average), y=Average, fill=DepName))+ ylab("Number of equipements per inhabitants") + xlab("Departement") + labs(fill = "Departements") + geom_col(position = 'dodge')
+ggplot(data=Bests, aes(x=reorder(DepCode, Average), y=Average, fill=DepName)) + ylab("Number of equipements per inhabitants") + xlab("Departement") + labs(fill = "Departements") + geom_col(position = 'dodge')
