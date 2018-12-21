@@ -28,7 +28,9 @@ Life_expectancy_department_2016$Avg_Exp = ((Life_expectancy_department_2016$Exp_
 # Population variation
 Population_variations_2010_2015 = read.csv("C:/Users/Alex/Desktop/GitHub/Big Data/Population_variations_2010_2015.csv", sep=";",dec=".")
 
-
+# Investment per departement
+Budget_per_department_2015 = read.csv("C:/Users/Alex/Desktop/GitHub/Big Data/Depenses_InvestissementmentAllDept2015.csv", sep=";")
+Budget_per_department_2015 <- merge(Budget_per_department_2015, Population_per_department_2015, by = "DepName")
 
 
 # Lecture des départements
@@ -167,12 +169,12 @@ dev.off()
 ################################################################################################
 
 # Échelle de couleurs
-col <- findColours(classIntervals(Population_variations_2010_2015$Variation, 5, style="quantile"),smoothColors("red",5,"green"))
+col <- findColours(classIntervals(Budget_per_department_2015$Depensestotales_hab, 5, style="quantile"),smoothColors("white",5,"#e900ff"))
 # Légende
-leg <- findColours(classIntervals(round(Population_variations_2010_2015$Variation), 4, style="quantile"),smoothColors("red",4,"green"),under="less than", over="more than", between="-",cutlabels=FALSE)
+leg <- findColours(classIntervals(round(Budget_per_department_2015$Depensestotales_hab), 4, style="quantile"),smoothColors("white",4,"#e900ff"),under="less than", over="more than", between="-",cutlabels=FALSE)
 
 # Exportation en PDF avec gestion de la police
-cairo_pdf('C:/Users/Alex/Desktop/GitHub/Big Data/Map_Results/pop_var.pdf',width=6,height=4.7)
+cairo_pdf('C:/Users/Alex/Desktop/GitHub/Big Data/Map_Results/budget.pdf',width=6,height=4.7)
 par(mar=c(0,0,0,0),family="Myriad Pro",ps=8)
 
 # Tracé de la carte
@@ -185,6 +187,6 @@ plot(frontieres, col="#666666", lwd=1, add=TRUE)
 # Affichage de la légende
 legend(-10000,6387500,fill=attr(leg, "palette"),
        legend=names(attr(leg,"table")),
-       title = "Population variations in % :")
+       title = "Total expense per inhabitants :")
 
 dev.off()
